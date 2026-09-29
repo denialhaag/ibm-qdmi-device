@@ -305,12 +305,11 @@ TEST(Auth, FailedRefreshReleasesWaitingRequests) {
 }
 
 TEST(Auth, RetriesTransientReadsWithOneBudget) {
-  using namespace std::chrono_literals;
   for (const int status : {0, 429, 500, 502, 503, 504}) {
     auto now = ibm::Deadline{};
     const auto started = now;
     auto config = ibm::resolve(configuration());
-    config.requestTimeout = 2s;
+    config.requestTimeout = std::chrono::seconds{2};
     int reads = 0;
     std::vector<std::chrono::milliseconds> timeouts;
     std::vector<ibm::Deadline> sleeps;
@@ -319,17 +318,17 @@ TEST(Auth, RetriesTransientReadsWithOneBudget) {
         [&](const ibm::Request& request) {
           timeouts.push_back(request.timeout);
           if (!request.form.empty()) {
-            now += 50ms;
+            now += std::chrono::milliseconds{50};
             return ibm::Response{.status = 200,
                                  .body = fixture()["auth"].dump()};
           }
           if (++reads < 3) {
-            now += 50ms;
+            now += std::chrono::milliseconds{50};
             return ibm::Response{.status = status,
                                  .body = {},
                                  .failed = status == 0,
                                  .transient = status == 0,
-                                 .retryAfter = 150ms};
+                                 .retryAfter = std::chrono::milliseconds{150}};
           }
           return ibm::Response{.status = 200, .body = "{}"};
         },
@@ -338,17 +337,20 @@ TEST(Auth, RetriesTransientReadsWithOneBudget) {
           sleeps.push_back(until);
           now = until;
         });
-    EXPECT_EQ(auth.get("/status", started + 1s), "{}");
+    EXPECT_EQ(auth.get("/status", started + std::chrono::seconds{1}), "{}");
     EXPECT_EQ(reads, 3);
-    EXPECT_EQ(sleeps,
-              (std::vector<ibm::Deadline>{started + 250ms, started + 500ms}));
-    EXPECT_EQ(timeouts, (std::vector<std::chrono::milliseconds>{1s, 950ms,
-                                                                750ms, 500ms}));
+    EXPECT_EQ(sleeps, (std::vector<ibm::Deadline>{
+                          started + std::chrono::milliseconds{250},
+                          started + std::chrono::milliseconds{500}}));
+    EXPECT_EQ(
+        timeouts,
+        (std::vector<std::chrono::milliseconds>{
+            std::chrono::seconds{1}, std::chrono::milliseconds{950},
+            std::chrono::milliseconds{750}, std::chrono::milliseconds{500}}));
   }
 }
 
 TEST(Auth, BoundsRetriesAcrossUnauthorizedResponses) {
-  using namespace std::chrono_literals;
   auto now = ibm::Deadline{};
   int exchanges = 0;
   int reads = 0;
@@ -365,7 +367,7 @@ TEST(Auth, BoundsRetriesAcrossUnauthorizedResponses) {
   EXPECT_EQ(auth.request("/status").status, 503);
   EXPECT_EQ(exchanges, 2);
   EXPECT_EQ(reads, 4);
-  EXPECT_EQ(now, ibm::Deadline{} + 300ms);
+  EXPECT_EQ(now, ibm::Deadline{} + std::chrono::milliseconds{300});
 }
 
 TEST(Auth, DoesNotRetryPermanentFailuresOrPosts) {
@@ -406,8 +408,9 @@ TEST(Auth, DoesNotRetryAuthenticationExchange) {
 }
 
 TEST(Auth, BackoffRespectsDeadlineAndServerDelay) {
-  using namespace std::chrono_literals;
-  for (const auto delay : {100ms, 1000ms, std::chrono::milliseconds::max()}) {
+  for (const auto delay :
+       {std::chrono::milliseconds{100}, std::chrono::milliseconds{1000},
+        std::chrono::milliseconds::max()}) {
     auto now = ibm::Deadline{};
     int reads = 0;
     ibm::Auth auth(
@@ -422,13 +425,15 @@ TEST(Auth, BackoffRespectsDeadlineAndServerDelay) {
         },
         [&] { return now; },
         [](ibm::Deadline) { ADD_FAILURE() << "Cannot retry within budget"; });
-    EXPECT_EQ(auth.request("/status", false, {}, now + 100ms).status, 429);
+    EXPECT_EQ(
+        auth.request("/status", false, {}, now + std::chrono::milliseconds{100})
+            .status,
+        429);
     EXPECT_EQ(reads, 1);
   }
 }
 
 TEST(Auth, ChecksDeadlineAgainAfterSleep) {
-  using namespace std::chrono_literals;
   auto now = ibm::Deadline{};
   int reads = 0;
   ibm::Auth auth(
@@ -440,8 +445,10 @@ TEST(Auth, ChecksDeadlineAgainAfterSleep) {
         ++reads;
         return ibm::Response{.status = 503, .body = {}};
       },
-      [&] { return now; }, [&](ibm::Deadline) { now += 1s; });
-  expectFailure([&] { (void)auth.get("/status", now + 500ms); },
-                QDMI_ERROR_TIMEOUT);
+      [&] { return now; },
+      [&](ibm::Deadline) { now += std::chrono::seconds{1}; });
+  expectFailure(
+      [&] { (void)auth.get("/status", now + std::chrono::milliseconds{500}); },
+      QDMI_ERROR_TIMEOUT);
   EXPECT_EQ(reads, 1);
 }
