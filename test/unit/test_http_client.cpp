@@ -179,6 +179,23 @@ TEST(Http, ResolvesPlatformTrustWithoutOverrides) {
 #endif
 }
 
+TEST(Http, ParsesRetryAfterWithoutOverflow) {
+  using ibm::internal::parseRetryAfter;
+  EXPECT_EQ(parseRetryAfter("0"), std::chrono::milliseconds{0});
+  EXPECT_EQ(parseRetryAfter("2"), std::chrono::milliseconds{2000});
+  EXPECT_EQ(parseRetryAfter("999999999999999999999999999999"),
+            std::chrono::milliseconds::max());
+  EXPECT_EQ(parseRetryAfter("18446744073709551615"),
+            std::chrono::milliseconds::max());
+  EXPECT_EQ(parseRetryAfter("Wed, 01 Jan 2020 00:00:00 GMT"),
+            std::chrono::milliseconds{0});
+  EXPECT_GT(parseRetryAfter("Fri, 31 Dec 9999 23:59:59 GMT"),
+            std::chrono::hours{24});
+  for (const auto* value : {"", "-1", "1.5", "invalid", "2garbage"}) {
+    EXPECT_FALSE(parseRetryAfter(value).has_value()) << value;
+  }
+}
+
 TEST_F(CaBundleTest, SearchesReadableCandidatesInOrder) {
   const std::array candidates{first.c_str(), second.c_str()};
   EXPECT_TRUE(ibm::internal::findCaBundle({}).empty());

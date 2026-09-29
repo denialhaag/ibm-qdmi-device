@@ -20,7 +20,11 @@
 
 #include "Http.hpp"
 
+#include <algorithm>
+#include <charconv>
+#include <chrono>
 #include <cpr/body.h>
+#include <cpr/connection_pool.h>
 #include <cpr/cprtypes.h>
 #include <cpr/error.h>
 #include <cpr/payload.h>
@@ -28,13 +32,16 @@
 #include <cpr/session.h>
 #include <cstdint>
 #include <cstdlib>
+#include <ctime>
 #include <curl/curl.h>
 #include <curl/urlapi.h>
 #include <fstream>
 #include <ibm_qdmi/constants.h>
 #include <memory>
+#include <optional>
 #include <span>
 #include <string>
+#include <system_error>
 #include <thread>
 #include <utility>
 
@@ -94,6 +101,37 @@ std::string internal::resolveCaBundle() {
 #endif
 }
 
+std::optional<std::chrono::milliseconds>
+internal::parseRetryAfter(const std::string& value) {
+  using Milliseconds = std::chrono::milliseconds;
+  std::uint64_t seconds = 0;
+  const auto [end, error] =
+      std::from_chars(value.data(), value.data() + value.size(), seconds);
+  if (end == value.data() + value.size() &&
+      (error == std::errc{} || error == std::errc::result_out_of_range)) {
+    if (error == std::errc::result_out_of_range ||
+        seconds >
+            static_cast<std::uint64_t>((Milliseconds::max)().count() / 1000)) {
+      return (Milliseconds::max)();
+    }
+    return Milliseconds{static_cast<Milliseconds::rep>(seconds * 1000)};
+  }
+  const auto date = curl_getdate(value.c_str(), nullptr);
+  if (date < 0) {
+    return std::nullopt;
+  }
+  const auto secondsUntil =
+      (std::max)(0.0, std::difftime(date, std::time(nullptr)));
+  const auto maximumSeconds =
+      std::chrono::duration_cast<std::chrono::seconds>((Milliseconds::max)())
+          .count();
+  if (secondsUntil >= static_cast<double>(maximumSeconds)) {
+    return (Milliseconds::max)();
+  }
+  return std::chrono::duration_cast<Milliseconds>(
+      std::chrono::duration<double>{secondsUntil});
+}
+
 internal::Hooks& internal::hooks() {
   static Hooks value{.sleepUntil = [](auto deadline) {
     std::this_thread::sleep_until(deadline);
@@ -128,6 +166,17 @@ Response send(const Request& request) {
     throw Failure{QDMI_ERROR_INVALIDARGUMENT};
   }
   cpr::Session client;
+  if (request.form.empty() && !request.post) {
+    // Connection sharing across concurrent threads is unsupported by libcurl.
+    // Fresh sessions share only this thread's read connections, never cookies.
+    thread_local const cpr::ConnectionPool CONNECTIONS;
+    client.SetConnectionPool(CONNECTIONS);
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
+    if (curl_easy_setopt(client.GetCurlHolder()->handle, CURLOPT_MAXCONNECTS,
+                         4L) != CURLE_OK) {
+      throw Failure{QDMI_ERROR_FATAL};
+    }
+  }
   // Avoid process-wide signal handler races between concurrent requests.
   // libcurl exposes this option through its variadic C API and requires a long.
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
@@ -168,7 +217,16 @@ Response send(const Request& request) {
   return {.status = static_cast<std::int32_t>(response.status_code),
           .body = std::move(response.text),
           .timedOut = response.error.code == cpr::ErrorCode::OPERATION_TIMEDOUT,
-          .failed = response.error.code != cpr::ErrorCode::OK};
+          .failed = response.error.code != cpr::ErrorCode::OK,
+          .transient =
+              response.error.code == cpr::ErrorCode::COULDNT_CONNECT ||
+              response.error.code == cpr::ErrorCode::COULDNT_RESOLVE_HOST ||
+              response.error.code == cpr::ErrorCode::SEND_ERROR ||
+              response.error.code == cpr::ErrorCode::RECV_ERROR ||
+              response.error.code == cpr::ErrorCode::GOT_NOTHING ||
+              response.error.code == cpr::ErrorCode::PARTIAL_FILE,
+          .retryAfter =
+              internal::parseRetryAfter(response.header["Retry-After"])};
 }
 
 void checkResponse(const Response& response) {

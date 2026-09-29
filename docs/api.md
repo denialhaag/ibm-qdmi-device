@@ -57,10 +57,14 @@ empty path returns `QDMI_ERROR_INVALIDARGUMENT`.
 The API key is exchanged at IAM. Backend requests use the resulting bearer
 token, `Service-CRN`, and `IBM-API-Version: 2026-04-15`. Tokens and their expiry
 belong to individual sessions. Refresh occurs before expiry and once after an
-HTTP 401; the authenticated GET is retried once. Each HTTP request uses the
-configured timeout, including IAM refresh and a GET retry. A shorter job-wait
-deadline takes precedence. The default is 30 seconds; a refresh and retry may
-require multiple requests. Other errors are not retried. See
+HTTP 401; the authenticated GET is retried once. GET requests retry temporary
+connection failures and HTTP 429, 500, 502, 503, and 504 responses at most
+twice. Retries wait 100 then 200 milliseconds, or longer when `Retry-After`
+requires it. Authentication, requests, and backoff share the configured timeout,
+which defaults to 30 seconds. A shorter job-wait deadline takes precedence.
+Retries stop when the next delay cannot fit within that budget. POST requests,
+including IAM exchanges, job submission, and cancellation, are never retried.
+See
 [IBM authentication](https://quantum.cloud.ibm.com/docs/en/guides/cloud-setup-rest-api).
 
 Independent device queries, job retrievals, and operations on different job

@@ -30,6 +30,7 @@
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <ibm_qdmi/constants.h>
 #include <ios>
 #include <iterator>
@@ -167,9 +168,10 @@ Configuration resolve(Configuration configuration) {
 }
 
 Auth::Auth(Configuration configurationValue, Transport transportValue,
-           Clock clockValue)
+           Clock clockValue, std::function<void(Deadline)> sleepUntilValue)
     : configuration(std::move(configurationValue)),
-      transport(std::move(transportValue)), clock(std::move(clockValue)) {}
+      transport(std::move(transportValue)), clock(std::move(clockValue)),
+      sleepUntil(std::move(sleepUntilValue)) {}
 
 std::chrono::milliseconds Auth::remaining(Deadline deadline) const {
   const auto now = clock();
@@ -227,6 +229,7 @@ std::shared_ptr<Auth::Token> Auth::acquireToken(Deadline deadline) {
 
 Response Auth::request(const std::string& resource, bool post,
                        const std::string& body, Deadline deadline) {
+  deadline = std::min(deadline, clock() + configuration.requestTimeout);
   auto token = acquireToken(deadline);
   const auto request = [&] {
     return transport({.url = configuration.baseUrl + resource,
@@ -240,19 +243,35 @@ Response Auth::request(const std::string& resource, bool post,
                       .body = body,
                       .timeout = remaining(deadline)});
   };
-  auto response = request();
-  if (!response.failed && !response.timedOut && response.status == 401) {
-    // A late response invalidates only the token used for that request.
-    token->valid = false;
-    if (!post) {
-      token = acquireToken(deadline);
-      response = request();
-      if (!response.failed && !response.timedOut && response.status == 401) {
-        token->valid = false;
+  bool refreshed = false;
+  for (int retries = 0;;) {
+    auto response = request();
+    if (!response.failed && !response.timedOut && response.status == 401) {
+      // A late response invalidates only the token used for that request.
+      token->valid = false;
+      if (!post && !refreshed) {
+        refreshed = true;
+        token = acquireToken(deadline);
+        continue;
       }
     }
+    const bool transient =
+        response.failed ? response.transient
+                        : response.status == 429 || response.status == 500 ||
+                              response.status == 502 ||
+                              response.status == 503 || response.status == 504;
+    if (post || response.timedOut || !transient || retries == 2) {
+      return response;
+    }
+    const auto delay = std::max(
+        std::chrono::milliseconds{100 << retries},
+        response.retryAfter.value_or(std::chrono::milliseconds::zero()));
+    if (delay >= remaining(deadline)) {
+      return response;
+    }
+    sleepUntil(clock() + delay);
+    ++retries;
   }
-  return response;
 }
 
 std::string Auth::get(const std::string& resource, Deadline deadline) {
