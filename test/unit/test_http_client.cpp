@@ -19,9 +19,12 @@
 
 #include "Http.hpp"
 
+#include <array>
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
+#include <filesystem>
+#include <fstream>
 #include <gtest/gtest.h>
 #include <ibm_qdmi/constants.h>
 #include <optional>
@@ -36,10 +39,6 @@
 
 #ifdef _WIN32
 #include <stdlib.h> // NOLINT(modernize-deprecated-headers) -- Windows environment extensions
-#endif
-
-#ifdef __linux__
-#include <fstream>
 #endif
 
 namespace {
@@ -79,6 +78,26 @@ private:
   }
   const char* name;
   std::optional<std::string> previous;
+};
+
+class CaBundleTest : public testing::Test {
+protected:
+  const std::filesystem::path path =
+      std::filesystem::path(testing::TempDir()) /
+      ("ibm-qdmi-ca-" +
+       std::to_string(
+           std::chrono::steady_clock::now().time_since_epoch().count()));
+  const std::string first = path.string() + "-first.pem";
+  const std::string second = path.string() + "-second.pem";
+  void TearDown() override {
+    std::filesystem::remove(first);
+    std::filesystem::remove(second);
+  }
+  static void write(const std::string& filename) {
+    std::ofstream output{filename};
+    output << "synthetic bundle";
+    ASSERT_TRUE(output.good());
+  }
 };
 
 template <class Function> void expectFailure(Function&& function, int status) {
@@ -175,4 +194,14 @@ TEST(Http, ParsesRetryAfterWithoutOverflow) {
   for (const auto* value : {"", "-1", "1.5", "invalid", "2garbage"}) {
     EXPECT_FALSE(parseRetryAfter(value).has_value()) << value;
   }
+}
+
+TEST_F(CaBundleTest, SearchesReadableCandidatesInOrder) {
+  const std::array candidates{first.c_str(), second.c_str()};
+  EXPECT_TRUE(ibm::internal::findCaBundle({}).empty());
+  EXPECT_TRUE(ibm::internal::findCaBundle(candidates).empty());
+  write(second);
+  EXPECT_EQ(ibm::internal::findCaBundle(candidates), second);
+  write(first);
+  EXPECT_EQ(ibm::internal::findCaBundle(candidates), first);
 }

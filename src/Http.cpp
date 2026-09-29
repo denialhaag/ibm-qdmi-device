@@ -35,9 +35,11 @@
 #include <ctime>
 #include <curl/curl.h>
 #include <curl/urlapi.h>
+#include <fstream>
 #include <ibm_qdmi/constants.h>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <system_error>
 #include <thread>
@@ -51,7 +53,6 @@
 
 #ifdef __linux__
 #include <array>
-#include <fstream>
 #endif
 
 // libcurl exposes a macro in curl.h on some platforms and a function otherwise.
@@ -60,6 +61,15 @@
 #endif
 
 namespace ibm {
+std::string internal::findCaBundle(std::span<const char* const> candidates) {
+  for (const auto* candidate : candidates) {
+    if (const std::ifstream file{candidate}; file.good()) {
+      return candidate;
+    }
+  }
+  return {};
+}
+
 std::string internal::resolveCaBundle() {
   for (const auto* variable : {"CURL_CA_BUNDLE", "SSL_CERT_FILE"}) {
 #ifdef _MSC_VER
@@ -85,13 +95,10 @@ std::string internal::resolveCaBundle() {
       "/etc/ssl/ca-bundle.pem",
       "/etc/ssl/cert.pem",
   };
-  for (const auto* bundle : bundles) {
-    if (const std::ifstream file{bundle}; file.good()) {
-      return bundle;
-    }
-  }
-#endif
+  return findCaBundle(bundles);
+#else
   return {};
+#endif
 }
 
 std::optional<std::chrono::milliseconds>

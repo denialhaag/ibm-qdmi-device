@@ -24,6 +24,7 @@
 #include <functional>
 #include <map>
 #include <optional>
+#include <span>
 #include <string>
 
 namespace ibm {
@@ -48,6 +49,8 @@ using Transport = std::function<Response(const Request&)>;
 bool validEndpoint(const std::string& url);
 Response send(const Request& request);
 namespace internal {
+/// Return the first readable CA bundle, or empty to keep platform defaults.
+std::string findCaBundle(std::span<const char* const> candidates);
 /// Prefer CURL_CA_BUNDLE, then SSL_CERT_FILE, then a readable Linux CA bundle.
 /// Preserve invalid explicit paths so TLS fails; empty keeps platform defaults.
 std::string resolveCaBundle();
