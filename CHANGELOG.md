@@ -12,6 +12,10 @@ releases may include breaking changes.
 
 ### Fixed
 
+- 🐛 Reuse read connections and retry temporary GET failures within one timeout,
+  respecting `Retry-After` while keeping POST requests single attempts. ([#46])
+  ([**@marcelwa**])
+
 - 🐛 Discover host CA bundles for native TLS requests and honor explicit CA
   paths without weakening certificate or hostname verification. ([#45])
   ([**@marcelwa**])
@@ -191,3 +195,4 @@ releases may include breaking changes.
 [#36]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/36
 [#40]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/40
 [#45]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/45
+[#46]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/46
