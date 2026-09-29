@@ -49,6 +49,17 @@ directory contains the native runtime and development components. The package
 includes typing metadata and exposes `ibm.qdmi.__version__`. See the
 [Python package guide](python_package.md) for installed paths and CLI options.
 
+## TLS certificates
+
+Linux clients discover the host CA bundle on Debian/Ubuntu, RHEL, SUSE, and
+Alpine. Install the distribution's `ca-certificates` package if it is missing.
+Other platforms retain libcurl's default trust configuration.
+
+For a private CA or nonstandard location, set `CURL_CA_BUNDLE` to a PEM bundle.
+`SSL_CERT_FILE` is used when `CURL_CA_BUNDLE` is unset or empty. Invalid
+explicit paths fail requests; certificate and hostname verification remain
+enabled. These settings apply to both native and Python clients.
+
 ## Device discovery
 
 The relocatable `ibm-qdmi-device.qdmi.json` catalogue lives beside the shared

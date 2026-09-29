@@ -45,6 +45,9 @@ using Transport = std::function<Response(const Request&)>;
 bool validEndpoint(const std::string& url);
 Response send(const Request& request);
 namespace internal {
+/// Prefer CURL_CA_BUNDLE, then SSL_CERT_FILE, then a readable Linux CA bundle.
+/// Preserve invalid explicit paths so TLS fails; empty keeps platform defaults.
+std::string resolveCaBundle();
 /// Internal dependencies shared by the device and hermetic native tests.
 struct Hooks {
   Transport transport = send;

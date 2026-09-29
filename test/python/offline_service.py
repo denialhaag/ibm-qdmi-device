@@ -33,6 +33,7 @@ from native_support import Native, load_native
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
+    from ssl import SSLContext
 
 CRN = "crn:v1:bluemix:public:quantum-computing:us-east:a:instance::"
 
@@ -77,7 +78,7 @@ class Service:
 
 
 @contextmanager
-def serve() -> Iterator[Service]:
+def serve(*, tls: SSLContext | None = None) -> Iterator[Service]:
     """Serve IBM-shaped responses without external network access.
 
     Yields:
@@ -99,13 +100,21 @@ def serve() -> Iterator[Service]:
             data = state.data.get(key, {})
             if state.respond is not None and "/jobs" in self.path:
                 status, data = state.respond(self.path, body)
+            content = (
+                data
+                if isinstance(data, bytes)
+                else data.encode()
+                if isinstance(data, str)
+                else json.dumps(data).encode()
+            )
             self.send_response(status)
+            self.send_header("Content-Length", str(len(content)))
             if status == 302:
                 self.send_header("Location", state.url + "/redirect-target")
             # Timeout tests close the client before the delayed reply.
             with suppress(ConnectionError):
                 self.end_headers()
-                self.wfile.write(data.encode() if isinstance(data, str) else json.dumps(data).encode())
+                self.wfile.write(content)
 
         def do_GET(self) -> None:
             """Handle a backend query."""
@@ -116,7 +125,10 @@ def serve() -> Iterator[Service]:
             self.respond(self.rfile.read(int(self.headers.get("Content-Length", "0"))))
 
     with LoopbackHTTPServer(("127.0.0.1", 0), Handler) as server:
-        state.url = f"http://127.0.0.1:{server.server_port}"
+        if tls is not None:
+            server.socket = tls.wrap_socket(server.socket, server_side=True)
+        scheme = "https" if tls is not None else "http"
+        state.url = f"{scheme}://127.0.0.1:{server.server_port}"
         thread = Thread(target=server.serve_forever, kwargs={"poll_interval": 0.01})
         thread.start()
         try:
