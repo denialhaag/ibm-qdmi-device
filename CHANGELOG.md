@@ -30,6 +30,15 @@ releases may include breaking changes.
 
 ### Added
 
+- ✨ Add optional Executor v2.0 programs through QDMI with native job retrieval
+  and complete results. Expose `IBMBackend.executor()` through the `executor`
+  extra, preserving the existing sampler and estimator paths. ([#40])
+  ([**@marcelwa**])
+
+- 🧪 Add full H₂ QSCI and seven MQT Bench showcases with simulator tutorials and
+  offline validation, derivative-free VQE, and bounded-memory distribution
+  checks. ([#38]) ([**@marcelwa**])
+
 - 📚 Embed native declarations in Sphinx and execute cached simulator notebooks
   during documentation builds, including sampling and VQE offloaders. Preserve
   standalone native API links. ([#37]) ([**@marcelwa**])
@@ -173,4 +182,7 @@ releases may include breaking changes.
 [**@marcelwa**]: https://github.com/marcelwa
 
 [#37]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/37
+
+[#38]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/38
 [#36]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/36
+[#40]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/40
