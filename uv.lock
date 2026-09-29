@@ -1002,6 +1002,7 @@ build = [
 ]
 chemistry = [
     { name = "cmake", marker = "python_full_version < '3.14'" },
+    { name = "cryptography", marker = "python_full_version < '3.14'" },
     { name = "mqt-bench", marker = "python_full_version < '3.14'" },
     { name = "mqt-core", extra = ["pennylane", "qiskit"], marker = "python_full_version < '3.14'" },
     { name = "ninja", marker = "python_full_version < '3.14'" },
@@ -1013,9 +1014,11 @@ chemistry = [
     { name = "qiskit-algorithms", marker = "python_full_version < '3.14'" },
     { name = "qiskit-ibm-runtime", marker = "python_full_version < '3.14'" },
     { name = "qiskit-nature", extra = ["pyscf"], marker = "python_full_version < '3.14' and sys_platform != 'win32'" },
+    { name = "trustme", marker = "python_full_version < '3.14'" },
 ]
 dev = [
     { name = "build" },
+    { name = "cryptography" },
     { name = "mqt-core", extra = ["pennylane", "qiskit"] },
     { name = "nox" },
     { name = "pytest" },
@@ -1026,6 +1029,7 @@ dev = [
     { name = "qiskit-algorithms" },
     { name = "qiskit-ibm-runtime" },
     { name = "scikit-build-core" },
+    { name = "trustme" },
 ]
 docs = [
     { name = "breathe" },
@@ -1039,6 +1043,7 @@ docs = [
 ]
 examples = [
     { name = "cmake" },
+    { name = "cryptography" },
     { name = "mqt-bench" },
     { name = "mqt-core", extra = ["pennylane", "qiskit"] },
     { name = "ninja" },
@@ -1049,8 +1054,10 @@ examples = [
     { name = "pyyaml" },
     { name = "qiskit-algorithms" },
     { name = "qiskit-ibm-runtime" },
+    { name = "trustme" },
 ]
 test = [
+    { name = "cryptography" },
     { name = "mqt-core", extra = ["pennylane", "qiskit"] },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -1059,10 +1066,12 @@ test = [
     { name = "pyyaml" },
     { name = "qiskit-algorithms" },
     { name = "qiskit-ibm-runtime" },
+    { name = "trustme" },
 ]
 typecheck = [
     { name = "breathe" },
     { name = "cmake" },
+    { name = "cryptography" },
     { name = "furo" },
     { name = "mqt-bench" },
     { name = "mqt-core", extra = ["pennylane", "qiskit"] },
@@ -1082,6 +1091,7 @@ typecheck = [
     { name = "sphinx-autoapi" },
     { name = "sphinx-copybutton" },
     { name = "sphinx-design" },
+    { name = "trustme" },
 ]
 
 [package.metadata]
@@ -1101,6 +1111,7 @@ build = [
 ]
 chemistry = [
     { name = "cmake", marker = "python_full_version >= '3.11' and python_full_version < '3.14'", specifier = ">=3.24" },
+    { name = "cryptography", marker = "python_full_version >= '3.11' and python_full_version < '3.14'", specifier = ">=42" },
     { name = "mqt-bench", marker = "python_full_version >= '3.11' and python_full_version < '3.14'", specifier = ">=2.2.2" },
     { name = "mqt-core", extras = ["pennylane", "qiskit"], marker = "python_full_version >= '3.11' and python_full_version < '3.14'", specifier = "~=4.0.0" },
     { name = "ninja", marker = "python_full_version >= '3.11' and python_full_version < '3.14'", specifier = ">=1.5" },
@@ -1112,9 +1123,11 @@ chemistry = [
     { name = "qiskit-algorithms", marker = "python_full_version >= '3.11' and python_full_version < '3.14'", specifier = ">=0.4" },
     { name = "qiskit-ibm-runtime", marker = "python_full_version >= '3.11' and python_full_version < '3.14'", specifier = "~=0.49.0" },
     { name = "qiskit-nature", extras = ["pyscf"], marker = "python_full_version >= '3.11' and python_full_version < '3.14' and sys_platform != 'win32'", specifier = ">=0.7.2" },
+    { name = "trustme", marker = "python_full_version >= '3.11' and python_full_version < '3.14'", specifier = ">=1.2.1" },
 ]
 dev = [
     { name = "build", specifier = ">=1.2.2" },
+    { name = "cryptography", specifier = ">=42" },
     { name = "mqt-core", extras = ["pennylane", "qiskit"], specifier = "~=4.0.0" },
     { name = "nox", specifier = ">=2026.8.10" },
     { name = "pytest", specifier = ">=9.1.1" },
@@ -1125,6 +1138,7 @@ dev = [
     { name = "qiskit-algorithms", specifier = ">=0.4" },
     { name = "qiskit-ibm-runtime", specifier = "~=0.49.0" },
     { name = "scikit-build-core", specifier = ">=1.0.3" },
+    { name = "trustme", specifier = ">=1.2.1" },
 ]
 docs = [
     { name = "breathe", specifier = ">=4.36,<5" },
@@ -1137,6 +1151,7 @@ docs = [
 ]
 examples = [
     { name = "cmake", specifier = ">=3.24" },
+    { name = "cryptography", specifier = ">=42" },
     { name = "mqt-bench", specifier = ">=2.2.2" },
     { name = "mqt-core", extras = ["pennylane", "qiskit"], specifier = "~=4.0.0" },
     { name = "ninja", specifier = ">=1.5" },
@@ -1147,8 +1162,10 @@ examples = [
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "qiskit-algorithms", specifier = ">=0.4" },
     { name = "qiskit-ibm-runtime", specifier = "~=0.49.0" },
+    { name = "trustme", specifier = ">=1.2.1" },
 ]
 test = [
+    { name = "cryptography", specifier = ">=42" },
     { name = "mqt-core", extras = ["pennylane", "qiskit"], specifier = "~=4.0.0" },
     { name = "pytest", specifier = ">=9.1.1" },
     { name = "pytest-cov", specifier = ">=7.1" },
@@ -1157,10 +1174,12 @@ test = [
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "qiskit-algorithms", specifier = ">=0.4" },
     { name = "qiskit-ibm-runtime", specifier = "~=0.49.0" },
+    { name = "trustme", specifier = ">=1.2.1" },
 ]
 typecheck = [
     { name = "breathe", specifier = ">=4.36,<5" },
     { name = "cmake", specifier = ">=3.24" },
+    { name = "cryptography", specifier = ">=42" },
     { name = "furo", specifier = ">=2025.12.19" },
     { name = "mqt-bench", specifier = ">=2.2.2" },
     { name = "mqt-core", extras = ["pennylane", "qiskit"], specifier = "~=4.0.0" },
@@ -1179,6 +1198,7 @@ typecheck = [
     { name = "sphinx-autoapi", specifier = ">=3.6.1" },
     { name = "sphinx-copybutton", specifier = ">=0.5.2" },
     { name = "sphinx-design", specifier = ">=0.7" },
+    { name = "trustme", specifier = ">=1.2.1" },
 ]
 
 [[package]]
@@ -3757,6 +3777,19 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/2c/2e/a7fbfe268c8a3b32546930c0297c101d65a4a14c304ad5790a9f478f0e4e/traitlets-5.16.1.tar.gz", hash = "sha256:ed900c2b631aa3a112811139fa97b8d2c3bad5e989656bba4b7e52c7852c18c1", size = 166137, upload-time = "2026-08-03T08:32:36.848Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ad/66/0d785f0bc5e4315a96c989bb476d0fc07ea4f85132550c7b156ca2035d52/traitlets-5.16.1-py3-none-any.whl", hash = "sha256:f775618166caa0396c8e337099240f2bd3e5e917d203b2e6fbe21a58d3cb1f6b", size = 86211, upload-time = "2026-08-03T08:32:34.48Z" },
+]
+
+[[package]]
+name = "trustme"
+version = "1.2.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cryptography" },
+    { name = "idna" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4b/c5/931476f4cf1cd9e736f32651005078061a50dc164a2569fb874e00eb2786/trustme-1.2.1.tar.gz", hash = "sha256:6528ba2bbc7f2db41f33825c8dd13e3e3eb9d334ba0f909713c8c3139f4ae47f", size = 26844, upload-time = "2025-01-02T01:55:32.632Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b5/f3/c34dbabf6da5eda56fe923226769d40e11806952cd7f46655dd06e10f018/trustme-1.2.1-py3-none-any.whl", hash = "sha256:d768e5fc57c86dfc5ec9365102e9b092541cd6954b35d8c1eea01a84f35a762a", size = 16530, upload-time = "2025-01-02T01:55:30.181Z" },
 ]
 
 [[package]]
