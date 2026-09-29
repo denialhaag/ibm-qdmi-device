@@ -127,9 +127,10 @@ def serve(*, tls: SSLContext | None = None) -> Iterator[Service]:
 
     with LoopbackHTTPServer(("127.0.0.1", 0), Handler) as server:
         if tls is not None:
-            # Keep the protocol bound explicit for TLS security analysis.
-            if tls.minimum_version < ssl.TLSVersion.TLSv1_2:  # ruff: ignore[if-stmt-min-max]
-                tls.minimum_version = ssl.TLSVersion.TLSv1_2
+            minimum = tls.minimum_version
+            tls.minimum_version = ssl.TLSVersion.TLSv1_2
+            if minimum > ssl.TLSVersion.TLSv1_2:
+                tls.minimum_version = minimum
             server.socket = tls.wrap_socket(server.socket, server_side=True)
         scheme = "https" if tls is not None else "http"
         state.url = f"{scheme}://127.0.0.1:{server.server_port}"
