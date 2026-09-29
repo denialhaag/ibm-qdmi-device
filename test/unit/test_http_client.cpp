@@ -159,3 +159,19 @@ TEST(Http, ResolvesPlatformTrustWithoutOverrides) {
   EXPECT_TRUE(bundle.empty());
 #endif
 }
+
+TEST(Http, ParsesRetryAfterWithoutOverflow) {
+  using namespace std::chrono_literals;
+  using ibm::internal::parseRetryAfter;
+  EXPECT_EQ(parseRetryAfter("0"), 0ms);
+  EXPECT_EQ(parseRetryAfter("2"), 2000ms);
+  EXPECT_EQ(parseRetryAfter("999999999999999999999999999999"),
+            std::chrono::milliseconds::max());
+  EXPECT_EQ(parseRetryAfter("18446744073709551615"),
+            std::chrono::milliseconds::max());
+  EXPECT_EQ(parseRetryAfter("Wed, 01 Jan 2020 00:00:00 GMT"), 0ms);
+  EXPECT_GT(parseRetryAfter("Fri, 31 Dec 9999 23:59:59 GMT"), 24h);
+  for (const auto* value : {"", "-1", "1.5", "invalid", "2garbage"}) {
+    EXPECT_FALSE(parseRetryAfter(value).has_value()) << value;
+  }
+}

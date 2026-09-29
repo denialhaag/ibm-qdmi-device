@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <functional>
 #include <map>
+#include <optional>
 #include <string>
 
 namespace ibm {
@@ -39,6 +40,8 @@ struct Response {
   std::string body;
   bool timedOut = false;
   bool failed = false;
+  bool transient = false;
+  std::optional<std::chrono::milliseconds> retryAfter;
 };
 using Transport = std::function<Response(const Request&)>;
 /// Validate an HTTPS endpoint, or an HTTP loopback endpoint for offline tests.
@@ -48,6 +51,8 @@ namespace internal {
 /// Prefer CURL_CA_BUNDLE, then SSL_CERT_FILE, then a readable Linux CA bundle.
 /// Preserve invalid explicit paths so TLS fails; empty keeps platform defaults.
 std::string resolveCaBundle();
+std::optional<std::chrono::milliseconds>
+parseRetryAfter(const std::string& value);
 /// Internal dependencies shared by the device and hermetic native tests.
 struct Hooks {
   Transport transport = send;

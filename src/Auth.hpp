@@ -52,12 +52,15 @@ Configuration resolve(Configuration configuration);
 std::chrono::milliseconds parseRequestTimeout(std::string_view value);
 class Auth {
 public:
-  explicit Auth(Configuration configuration,
-                Transport transport = internal::hooks().transport,
-                Clock clock = internal::hooks().now);
+  explicit Auth(
+      Configuration configuration,
+      Transport transport = internal::hooks().transport,
+      Clock clock = internal::hooks().now,
+      std::function<void(Deadline)> sleepUntil = internal::hooks().sleepUntil);
   std::string get(const std::string& resource,
                   Deadline deadline = Deadline::max());
-  /// GET may refresh and retry once after 401. POST is sent at most once.
+  /// GET retries transient failures twice and refreshes once after 401.
+  /// Authentication, retries, and backoff share one timeout. POST is sent once.
   Response request(const std::string& resource, bool post = false,
                    const std::string& body = {},
                    Deadline deadline = Deadline::max());
@@ -74,6 +77,7 @@ private:
   Configuration configuration;
   Transport transport;
   Clock clock;
+  std::function<void(Deadline)> sleepUntil;
   std::shared_ptr<Token> cachedToken;
   std::timed_mutex mutex;
 };

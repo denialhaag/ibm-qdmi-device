@@ -373,6 +373,10 @@ TEST_F(DeviceTest, AuthenticationAndBackendErrorsRemainConfigurable) {
       http.queue("/auth", {.status = 200, .body = data["auth"].dump()}, true);
       http.queue("/configuration", {.status = status, .body = "{}"});
     }
+    if (status == 429 || status == 500) {
+      http.queue("/configuration", {.status = status, .body = "{}"});
+      http.queue("/configuration", {.status = status, .body = "{}"});
+    }
     EXPECT_EQ(IBM_QDMI_device_session_init(session), expected);
     EXPECT_EQ(IBM_QDMI_device_session_set_parameter(
                   session, QDMI_DEVICE_SESSION_PARAMETER_TOKEN, 0, nullptr),
@@ -878,7 +882,8 @@ TEST_F(DeviceJobMockTest, ExecutorPreservesPayloadResultsAndRetrieval) {
   EXPECT_EQ(IBM_QDMI_device_job_submit(job), QDMI_ERROR_BADSTATE);
   queueStatus("Completed");
   ASSERT_EQ(IBM_QDMI_device_job_wait(job, 1), QDMI_SUCCESS);
-  const auto output = nlohmann::json::parse(R"({"schema_version":"v2.0","data":[
+  const auto output =
+      nlohmann::json::parse(R"({"schema_version":"v2.0","data":[
     {"results":{"meas":{"shape":[2,3,1],"data":"synthetic"},
     "measurement_flips.meas":{"shape":[2,1,1],"data":"corrections"}}}],
     "metadata":{"chunk_timing":[]}})");
