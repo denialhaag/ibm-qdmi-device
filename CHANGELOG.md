@@ -12,6 +12,10 @@ releases may include breaking changes.
 
 ### Fixed
 
+- 🐛 Discover host CA bundles for native TLS requests and honor explicit CA
+  paths without weakening certificate or hostname verification. ([#45])
+  ([**@marcelwa**])
+
 - 🐛 Allow one hour per backend for hardware validation, including queue time,
   without increasing the QPU execution budget. ([#32]) ([**@marcelwa**])
 
@@ -186,3 +190,4 @@ releases may include breaking changes.
 [#38]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/38
 [#36]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/36
 [#40]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/40
+[#45]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/45
