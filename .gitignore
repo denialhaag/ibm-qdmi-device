@@ -33,6 +33,7 @@ docs/_build/
 # Credentials and editor state
 .env
 .env.*
+!.env.example
 .idea/
 .vscode/
 .vs/

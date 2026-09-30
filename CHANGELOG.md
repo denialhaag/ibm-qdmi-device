@@ -41,6 +41,9 @@ releases may include breaking changes.
 
 ### Added
 
+- 📝 Add a sample environment file for IBM connection and optional client
+  settings. ([#47]) ([**@marcelwa**])
+
 - 🩺 Expose fixed, thread-local native failure categories without returning
   server text or account data. ([#48]) ([**@marcelwa**])
 
@@ -202,5 +205,6 @@ releases may include breaking changes.
 [#40]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/40
 [#45]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/45
 [#46]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/46
+[#47]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/47
 [#48]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/48
 [#49]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/49
