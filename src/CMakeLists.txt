@@ -36,7 +36,7 @@ target_include_directories(
                        "${CMAKE_CURRENT_BINARY_DIR}/include")
 target_compile_definitions(
   ibm-qdmi-core
-  PRIVATE IBM_QDMI_device_EXPORTS
+  PRIVATE IBM_QDMI_device_EXPORTS QDMI_VERSION="${IBM_QDMI_QDMI_VERSION}"
   INTERFACE $<$<PLATFORM_ID:Windows>:IBM_QDMI_STATIC_DEFINE>)
 target_link_libraries(
   ibm-qdmi-core
