@@ -49,6 +49,10 @@ For C++ projects, follow the
 [native installation guide](https://ibm-qdmi-device.readthedocs.io/en/latest/installation.html#native-package)
 for CMake build and installation commands.
 
+Use [.env.example](.env.example) as a reference for connection and optional
+client settings. Supply credentials through the process environment or a secret
+manager; the device does not load `.env` files.
+
 ## Where to Start
 
 | I want to…                                   | Guide                                                                                    |

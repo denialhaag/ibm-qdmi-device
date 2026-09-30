@@ -17,6 +17,10 @@ implemented device functions, types, and IBM-specific constants.
 
 ## Session configuration
 
+The repository's `.env.example` lists connection variables and optional client
+settings. The device reads process environment values; it does not load `.env`
+files.
+
 Include `ibm_qdmi/device.h` and `ibm-qdmi-device/constants.h`. Set parameters
 before initializing a session. Strings include the terminating null byte in
 `size`; embedded null bytes are rejected. A null value checks support without
