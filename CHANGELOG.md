@@ -12,6 +12,9 @@ releases may include breaking changes.
 
 ### Fixed
 
+- 🐛 Report the linked QDMI version for source and installed packages. ([#49])
+  ([**@marcelwa**])
+
 - 🐛 Reuse read connections and retry temporary GET failures within one timeout,
   respecting `Retry-After` while keeping POST requests single attempts. ([#46])
   ([**@marcelwa**])
@@ -196,3 +199,4 @@ releases may include breaking changes.
 [#40]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/40
 [#45]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/45
 [#46]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/46
+[#49]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/49
