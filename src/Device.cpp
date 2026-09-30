@@ -84,8 +84,8 @@ State& state() {
 }
 
 // The public accessor reports mutable state scoped to the calling thread.
-thread_local IBM_QDMI_Diagnostic lastDiagnostic =
-    IBM_QDMI_DIAGNOSTIC_NONE; // NOLINT
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
+thread_local IBM_QDMI_Diagnostic lastDiagnostic = IBM_QDMI_DIAGNOSTIC_NONE;
 IBM_QDMI_Diagnostic defaultDiagnostic(int status) noexcept {
   switch (status) {
   case QDMI_SUCCESS:

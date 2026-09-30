@@ -26,6 +26,7 @@
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
+#include <ibm-qdmi-device/diagnostics.h>
 #include <ibm_qdmi/constants.h>
 #include <optional>
 #include <string>
