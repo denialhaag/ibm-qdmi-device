@@ -336,7 +336,9 @@ void Job::cancel() {
 const Results& Job::results() {
   require(format != IBM_QDMI_PROGRAM_FORMAT_EXECUTOR, QDMI_ERROR_NOTSUPPORTED);
   const auto current = check();
-  require(current != QDMI_JOB_STATUS_FAILED, QDMI_ERROR_FATAL);
+  if (current == QDMI_JOB_STATUS_FAILED) {
+    throw Failure{QDMI_ERROR_FATAL, IBM_QDMI_DIAGNOSTIC_JOB_FAILED};
+  }
   require(current == QDMI_JOB_STATUS_DONE, QDMI_ERROR_INVALIDARGUMENT);
   if (!cached) {
     const auto response = auth->request("/v1/jobs/" + id + "/results");
@@ -354,7 +356,9 @@ const Results& Job::results() {
 const std::string& Job::executorResults() {
   require(format == IBM_QDMI_PROGRAM_FORMAT_EXECUTOR, QDMI_ERROR_NOTSUPPORTED);
   const auto current = check();
-  require(current != QDMI_JOB_STATUS_FAILED, QDMI_ERROR_FATAL);
+  if (current == QDMI_JOB_STATUS_FAILED) {
+    throw Failure{QDMI_ERROR_FATAL, IBM_QDMI_DIAGNOSTIC_JOB_FAILED};
+  }
   require(current == QDMI_JOB_STATUS_DONE, QDMI_ERROR_INVALIDARGUMENT);
   if (!cachedExecutor) {
     const auto response = auth->request("/v1/jobs/" + id + "/results");

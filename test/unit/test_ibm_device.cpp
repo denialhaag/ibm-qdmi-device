@@ -713,6 +713,18 @@ TEST_F(DeviceJobMockTest, WaitAdvancesClockWithoutImplicitCancellation) {
             QDMI_ERROR_INVALIDARGUMENT);
 }
 
+TEST_F(DeviceJobMockTest, FailedJobHasFixedDiagnostic) {
+  configure();
+  submit();
+  queueStatus("Failed");
+  EXPECT_EQ(IBM_QDMI_device_job_wait(job, 1), QDMI_ERROR_FATAL);
+  EXPECT_EQ(IBM_QDMI_device_last_diagnostic(), IBM_QDMI_DIAGNOSTIC_JOB_FAILED);
+  EXPECT_EQ(IBM_QDMI_device_job_get_results(job, QDMI_JOB_RESULT_SHOTS, 0,
+                                            nullptr, nullptr),
+            QDMI_ERROR_FATAL);
+  EXPECT_EQ(IBM_QDMI_device_last_diagnostic(), IBM_QDMI_DIAGNOSTIC_JOB_FAILED);
+}
+
 TEST_F(DeviceJobMockTest, SubmissionFailureAndTimeoutNeverRetry) {
   configure();
   http.queue("/jobs", {.status = 0, .body = "", .timedOut = true}, true);
@@ -907,7 +919,8 @@ TEST_F(DeviceJobMockTest, ExecutorPreservesPayloadResultsAndRetrieval) {
   EXPECT_EQ(IBM_QDMI_device_job_submit(job), QDMI_ERROR_BADSTATE);
   queueStatus("Completed");
   ASSERT_EQ(IBM_QDMI_device_job_wait(job, 1), QDMI_SUCCESS);
-  const auto output = nlohmann::json::parse(R"({"schema_version":"v2.0","data":[
+  const auto output =
+      nlohmann::json::parse(R"({"schema_version":"v2.0","data":[
     {"results":{"meas":{"shape":[2,3,1],"data":"synthetic"},
     "measurement_flips.meas":{"shape":[2,1,1],"data":"corrections"}}}],
     "metadata":{"chunk_timing":[]}})");
