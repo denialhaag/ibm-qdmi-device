@@ -22,6 +22,7 @@
 #include <chrono>
 #include <cstdint>
 #include <functional>
+#include <ibm-qdmi-device/diagnostics.h>
 #include <map>
 #include <optional>
 #include <span>
@@ -69,6 +70,7 @@ Hooks& hooks();
 /// An internal status-only exception; never carries server text or credentials.
 struct Failure {
   int status;
+  IBM_QDMI_Diagnostic diagnostic = IBM_QDMI_DIAGNOSTIC_NONE;
 };
 void checkResponse(const Response& response);
 } // namespace ibm

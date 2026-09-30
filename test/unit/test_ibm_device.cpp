@@ -28,6 +28,7 @@
 #include <fstream>
 #include <gtest/gtest.h>
 #include <ibm-qdmi-device/constants.h>
+#include <ibm-qdmi-device/diagnostics.h>
 #include <ibm_qdmi/device.h>
 #include <limits>
 #include <new>
@@ -35,6 +36,7 @@
 #include <nlohmann/json_fwd.hpp>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <utility>
 #include <vector>
 
@@ -175,6 +177,29 @@ TEST_F(DeviceTest, QueryContractAndDirectedCalibration) {
               "crn:v1:bluemix:public:quantum-computing:us-east:a:instance::");
     EXPECT_TRUE(requests[i].body.empty());
   }
+}
+
+TEST_F(DeviceTest, DiagnosticClearsAfterSuccess) {
+  http.queue("/auth", {.status = 0, .failed = true}, true);
+  EXPECT_EQ(IBM_QDMI_device_session_init(session), QDMI_ERROR_FATAL);
+  EXPECT_EQ(IBM_QDMI_device_last_diagnostic(), IBM_QDMI_DIAGNOSTIC_TRANSPORT);
+  EXPECT_EQ(IBM_QDMI_device_session_set_parameter(
+                session, QDMI_DEVICE_SESSION_PARAMETER_TOKEN, 0, nullptr),
+            QDMI_SUCCESS);
+  EXPECT_EQ(IBM_QDMI_device_last_diagnostic(), IBM_QDMI_DIAGNOSTIC_NONE);
+  EXPECT_EQ(IBM_QDMI_device_session_init(nullptr), QDMI_ERROR_INVALIDARGUMENT);
+  EXPECT_EQ(IBM_QDMI_device_last_diagnostic(),
+            IBM_QDMI_DIAGNOSTIC_INVALID_ARGUMENT);
+  std::thread other([] {
+    EXPECT_EQ(IBM_QDMI_device_last_diagnostic(), IBM_QDMI_DIAGNOSTIC_NONE);
+    EXPECT_EQ(IBM_QDMI_device_session_init(nullptr),
+              QDMI_ERROR_INVALIDARGUMENT);
+    EXPECT_EQ(IBM_QDMI_device_last_diagnostic(),
+              IBM_QDMI_DIAGNOSTIC_INVALID_ARGUMENT);
+  });
+  other.join();
+  EXPECT_EQ(IBM_QDMI_device_last_diagnostic(),
+            IBM_QDMI_DIAGNOSTIC_INVALID_ARGUMENT);
 }
 
 TEST_F(DeviceTest, StaticPropertiesUseCorrectTypesWithoutRequests) {
@@ -882,7 +907,8 @@ TEST_F(DeviceJobMockTest, ExecutorPreservesPayloadResultsAndRetrieval) {
   EXPECT_EQ(IBM_QDMI_device_job_submit(job), QDMI_ERROR_BADSTATE);
   queueStatus("Completed");
   ASSERT_EQ(IBM_QDMI_device_job_wait(job, 1), QDMI_SUCCESS);
-  const auto output = nlohmann::json::parse(R"({"schema_version":"v2.0","data":[
+  const auto output =
+      nlohmann::json::parse(R"({"schema_version":"v2.0","data":[
     {"results":{"meas":{"shape":[2,3,1],"data":"synthetic"},
     "measurement_flips.meas":{"shape":[2,1,1],"data":"corrections"}}}],
     "metadata":{"chunk_timing":[]}})");

@@ -231,19 +231,23 @@ Response send(const Request& request) {
 
 void checkResponse(const Response& response) {
   if (response.timedOut) {
-    throw Failure{QDMI_ERROR_TIMEOUT};
+    throw Failure{QDMI_ERROR_TIMEOUT, IBM_QDMI_DIAGNOSTIC_TIMEOUT};
   }
   if (response.failed) {
-    throw Failure{QDMI_ERROR_FATAL};
+    throw Failure{QDMI_ERROR_FATAL, IBM_QDMI_DIAGNOSTIC_TRANSPORT};
   }
   if (response.status == 401 || response.status == 403) {
-    throw Failure{QDMI_ERROR_PERMISSIONDENIED};
+    throw Failure{QDMI_ERROR_PERMISSIONDENIED,
+                  IBM_QDMI_DIAGNOSTIC_AUTHENTICATION};
   }
   if (response.status == 404) {
-    throw Failure{QDMI_ERROR_NOTFOUND};
+    throw Failure{QDMI_ERROR_NOTFOUND, IBM_QDMI_DIAGNOSTIC_NOT_FOUND};
+  }
+  if (response.status == 429) {
+    throw Failure{QDMI_ERROR_FATAL, IBM_QDMI_DIAGNOSTIC_RATE_LIMIT};
   }
   if (response.status != 200) {
-    throw Failure{QDMI_ERROR_FATAL};
+    throw Failure{QDMI_ERROR_FATAL, IBM_QDMI_DIAGNOSTIC_SERVICE};
   }
 }
 } // namespace ibm
