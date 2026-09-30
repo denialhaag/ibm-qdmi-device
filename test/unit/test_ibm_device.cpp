@@ -188,6 +188,9 @@ TEST_F(DeviceTest, StaticPropertiesUseCorrectTypesWithoutRequests) {
                   session, property, value.size(), value.data(), nullptr),
               QDMI_SUCCESS);
     EXPECT_NE(value.front(), '\0');
+    if (property == QDMI_DEVICE_PROPERTY_LIBRARYVERSION) {
+      EXPECT_STREQ(value.data(), QDMI_VERSION);
+    }
   }
   double scale = 0;
   EXPECT_EQ(IBM_QDMI_device_session_query_device_property(
@@ -882,7 +885,8 @@ TEST_F(DeviceJobMockTest, ExecutorPreservesPayloadResultsAndRetrieval) {
   EXPECT_EQ(IBM_QDMI_device_job_submit(job), QDMI_ERROR_BADSTATE);
   queueStatus("Completed");
   ASSERT_EQ(IBM_QDMI_device_job_wait(job, 1), QDMI_SUCCESS);
-  const auto output = nlohmann::json::parse(R"({"schema_version":"v2.0","data":[
+  const auto output =
+      nlohmann::json::parse(R"({"schema_version":"v2.0","data":[
     {"results":{"meas":{"shape":[2,3,1],"data":"synthetic"},
     "measurement_flips.meas":{"shape":[2,1,1],"data":"corrections"}}}],
     "metadata":{"chunk_timing":[]}})");
