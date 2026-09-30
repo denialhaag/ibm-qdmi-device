@@ -41,6 +41,9 @@ releases may include breaking changes.
 
 ### Added
 
+- 🩺 Expose fixed, thread-local native failure categories without returning
+  server text or account data. ([#48]) ([**@marcelwa**])
+
 - ✨ Add optional Executor v2.0 programs through QDMI with native job retrieval
   and complete results. Expose `IBMBackend.executor()` through the `executor`
   extra, preserving the existing sampler and estimator paths. ([#40])
@@ -199,4 +202,5 @@ releases may include breaking changes.
 [#40]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/40
 [#45]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/45
 [#46]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/46
+[#48]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/48
 [#49]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/49

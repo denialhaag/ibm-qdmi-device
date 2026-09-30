@@ -116,6 +116,17 @@ request deadlines to `QDMI_ERROR_TIMEOUT`, allocation failures to
 `QDMI_ERROR_OUTOFMEM`, and other transport/server/parsing failures to
 `QDMI_ERROR_FATAL`. Errors never include raw server responses or credentials.
 
+Include `ibm-qdmi-device/diagnostics.h` to inspect a fixed diagnostic category
+after a failed native call. `IBM_QDMI_device_last_diagnostic()` reports the last
+QDMI call on the current thread. A successful call resets it to `NONE`.
+`TRANSPORT` marks a connection failure, `RATE_LIMIT` marks a final HTTP 429, and
+`SERVICE` marks another unsuccessful HTTP response. `JOB_FAILED` marks a failed
+job without exposing its server reason. Other categories match the QDMI status
+or report `INTERNAL`. Read the category before another QDMI call on the same
+thread. The query sends no request and never returns server text, URLs,
+credentials, or backend details. It is an IBM extension; standard QDMI clients
+can ignore it.
+
 The supported backend response shapes follow the
 [IBM backend API](https://quantum.cloud.ibm.com/docs/en/api/qiskit-runtime-rest/tags/backends).
 Other QDMI properties return `QDMI_ERROR_NOTSUPPORTED`.
