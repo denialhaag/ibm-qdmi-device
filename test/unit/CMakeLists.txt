@@ -27,5 +27,6 @@ add_executable(
   test_program.cpp)
 target_link_libraries(unit_tests PRIVATE ibm::qdmi_device_internals GTest::gtest_main)
 target_compile_definitions(
-  unit_tests PRIVATE IBM_QDMI_FIXTURE_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../fixtures/backend.json")
+  unit_tests PRIVATE IBM_QDMI_FIXTURE_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../fixtures/backend.json"
+                     QDMI_VERSION="${IBM_QDMI_QDMI_VERSION}")
 gtest_discover_tests(unit_tests DISCOVERY_MODE PRE_TEST PROPERTIES LABELS unit DISCOVERY_TIMEOUT 60)

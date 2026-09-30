@@ -12,6 +12,9 @@ releases may include breaking changes.
 
 ### Fixed
 
+- 🐛 Report the linked QDMI version for source and installed packages. ([#49])
+  ([**@marcelwa**])
+
 - 🐛 Reuse read connections and retry temporary GET failures within one timeout,
   respecting `Retry-After` while keeping POST requests single attempts. ([#46])
   ([**@marcelwa**])
@@ -40,6 +43,9 @@ releases may include breaking changes.
 
 - 📝 Add a sample environment file for IBM connection and optional client
   settings. ([#47]) ([**@marcelwa**])
+
+- 🩺 Expose fixed, thread-local native failure categories without returning
+  server text or account data. ([#48]) ([**@marcelwa**])
 
 - ✨ Add optional Executor v2.0 programs through QDMI with native job retrieval
   and complete results. Expose `IBMBackend.executor()` through the `executor`
@@ -200,3 +206,5 @@ releases may include breaking changes.
 [#45]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/45
 [#46]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/46
 [#47]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/47
+[#48]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/48
+[#49]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/49

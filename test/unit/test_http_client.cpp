@@ -26,9 +26,11 @@
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
+#include <ibm-qdmi-device/diagnostics.h>
 #include <ibm_qdmi/constants.h>
 #include <optional>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -111,19 +113,23 @@ template <class Function> void expectFailure(Function&& function, int status) {
 } // namespace
 
 TEST(Http, MapsFailuresWithoutServerText) {
-  for (const auto& [status, expected] :
-       std::vector<std::pair<std::int32_t, int>>{
-           {401, QDMI_ERROR_PERMISSIONDENIED},
-           {403, QDMI_ERROR_PERMISSIONDENIED},
-           {404, QDMI_ERROR_NOTFOUND},
-           {429, QDMI_ERROR_FATAL},
-           {500, QDMI_ERROR_FATAL},
-           {302, QDMI_ERROR_FATAL}}) {
-    expectFailure(
-        [&] {
-          ibm::checkResponse({.status = status, .body = "private response"});
-        },
-        expected);
+  for (const auto& [status, expected, diagnostic] :
+       std::vector<std::tuple<std::int32_t, int, IBM_QDMI_Diagnostic>>{
+           {401, QDMI_ERROR_PERMISSIONDENIED,
+            IBM_QDMI_DIAGNOSTIC_AUTHENTICATION},
+           {403, QDMI_ERROR_PERMISSIONDENIED,
+            IBM_QDMI_DIAGNOSTIC_AUTHENTICATION},
+           {404, QDMI_ERROR_NOTFOUND, IBM_QDMI_DIAGNOSTIC_NOT_FOUND},
+           {429, QDMI_ERROR_FATAL, IBM_QDMI_DIAGNOSTIC_RATE_LIMIT},
+           {500, QDMI_ERROR_FATAL, IBM_QDMI_DIAGNOSTIC_SERVICE},
+           {302, QDMI_ERROR_FATAL, IBM_QDMI_DIAGNOSTIC_SERVICE}}) {
+    try {
+      ibm::checkResponse({.status = status, .body = "private response"});
+      FAIL() << "Expected a QDMI failure";
+    } catch (const ibm::Failure& error) {
+      EXPECT_EQ(error.status, expected);
+      EXPECT_EQ(error.diagnostic, diagnostic);
+    }
   }
   expectFailure(
       [] {

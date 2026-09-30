@@ -36,7 +36,7 @@ target_include_directories(
                        "${CMAKE_CURRENT_BINARY_DIR}/include")
 target_compile_definitions(
   ibm-qdmi-core
-  PRIVATE IBM_QDMI_device_EXPORTS
+  PRIVATE IBM_QDMI_device_EXPORTS QDMI_VERSION="${IBM_QDMI_QDMI_VERSION}"
   INTERFACE $<$<PLATFORM_ID:Windows>:IBM_QDMI_STATIC_DEFINE>)
 target_link_libraries(
   ibm-qdmi-core
@@ -72,8 +72,14 @@ target_sources(
          "${CMAKE_CURRENT_BINARY_DIR}/include/ibm_qdmi/types.h"
          "${CMAKE_CURRENT_BINARY_DIR}/include/ibm_qdmi/export.h")
 target_sources(
-  ${QDMI_TARGET_NAME} PUBLIC FILE_SET public_headers TYPE HEADERS FILES
-                             "${PROJECT_SOURCE_DIR}/include/ibm-qdmi-device/constants.h")
+  ${QDMI_TARGET_NAME}
+  PUBLIC FILE_SET
+         public_headers
+         TYPE
+         HEADERS
+         FILES
+         "${PROJECT_SOURCE_DIR}/include/ibm-qdmi-device/constants.h"
+         "${PROJECT_SOURCE_DIR}/include/ibm-qdmi-device/diagnostics.h")
 
 if(IBM_QDMI_ENABLE_COVERAGE)
   target_link_libraries(ibm-qdmi-core PUBLIC qdmi::qdmi_coverage_flags)

@@ -28,6 +28,7 @@
 #include <cstdint>
 #include <cstring>
 #include <ibm-qdmi-device/constants.h>
+#include <ibm-qdmi-device/diagnostics.h>
 #include <ibm_qdmi/device.h>
 #include <memory>
 #include <mutex>
@@ -82,14 +83,45 @@ State& state() {
   return value;
 }
 
+// The public accessor reports mutable state scoped to the calling thread.
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
+thread_local IBM_QDMI_Diagnostic lastDiagnostic = IBM_QDMI_DIAGNOSTIC_NONE;
+IBM_QDMI_Diagnostic defaultDiagnostic(int status) noexcept {
+  switch (status) {
+  case QDMI_SUCCESS:
+    return IBM_QDMI_DIAGNOSTIC_NONE;
+  case QDMI_ERROR_INVALIDARGUMENT:
+    return IBM_QDMI_DIAGNOSTIC_INVALID_ARGUMENT;
+  case QDMI_ERROR_BADSTATE:
+    return IBM_QDMI_DIAGNOSTIC_BAD_STATE;
+  case QDMI_ERROR_NOTSUPPORTED:
+    return IBM_QDMI_DIAGNOSTIC_NOT_SUPPORTED;
+  case QDMI_ERROR_PERMISSIONDENIED:
+    return IBM_QDMI_DIAGNOSTIC_AUTHENTICATION;
+  case QDMI_ERROR_NOTFOUND:
+    return IBM_QDMI_DIAGNOSTIC_NOT_FOUND;
+  case QDMI_ERROR_TIMEOUT:
+    return IBM_QDMI_DIAGNOSTIC_TIMEOUT;
+  default:
+    return IBM_QDMI_DIAGNOSTIC_INTERNAL;
+  }
+}
+
 template <class Function> int boundary(Function&& function) noexcept {
   try {
-    return std::forward<Function>(function)();
+    const auto result = std::forward<Function>(function)();
+    lastDiagnostic = defaultDiagnostic(result);
+    return result;
   } catch (const ibm::Failure& error) {
+    lastDiagnostic = error.diagnostic == IBM_QDMI_DIAGNOSTIC_NONE
+                         ? defaultDiagnostic(error.status)
+                         : error.diagnostic;
     return error.status;
   } catch (const std::bad_alloc&) {
+    lastDiagnostic = IBM_QDMI_DIAGNOSTIC_INTERNAL;
     return QDMI_ERROR_OUTOFMEM;
   } catch (...) {
+    lastDiagnostic = IBM_QDMI_DIAGNOSTIC_INTERNAL;
     return QDMI_ERROR_FATAL;
   }
 }
@@ -175,6 +207,8 @@ std::size_t siteIndex(const IBM_QDMI_Device_Session_impl_d& session,
   return (*found)->index;
 }
 } // namespace
+
+IBM_QDMI_Diagnostic IBM_QDMI_device_last_diagnostic() { return lastDiagnostic; }
 
 int IBM_QDMI_device_initialize() {
   return boundary([] {
@@ -324,7 +358,7 @@ int IBM_QDMI_device_session_query_device_property(
     case QDMI_DEVICE_PROPERTY_VERSION:
       return copyString(metadata.version, size, value, sizeRet);
     case QDMI_DEVICE_PROPERTY_LIBRARYVERSION:
-      return copyString("1.3.3", size, value, sizeRet);
+      return copyString(QDMI_VERSION, size, value, sizeRet);
     case QDMI_DEVICE_PROPERTY_SUPPORTEDPROGRAMFORMATS:
       return copyList(std::vector{QDMI_PROGRAM_FORMAT_QASM3,
                                   IBM_QDMI_PROGRAM_FORMAT_EXECUTOR},
@@ -541,7 +575,9 @@ int IBM_QDMI_device_job_wait(IBM_QDMI_Device_Job handle, std::size_t timeout) {
       require(lock.try_lock_until(deadline), QDMI_ERROR_TIMEOUT);
       const auto status = owned->job.check(deadline);
       require(status != QDMI_JOB_STATUS_CREATED, QDMI_ERROR_BADSTATE);
-      require(status != QDMI_JOB_STATUS_FAILED, QDMI_ERROR_FATAL);
+      if (status == QDMI_JOB_STATUS_FAILED) {
+        throw ibm::Failure{QDMI_ERROR_FATAL, IBM_QDMI_DIAGNOSTIC_JOB_FAILED};
+      }
       if (ibm::terminal(status)) {
         return QDMI_SUCCESS;
       }
