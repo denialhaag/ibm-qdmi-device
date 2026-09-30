@@ -36,6 +36,7 @@
 #include <curl/curl.h>
 #include <curl/urlapi.h>
 #include <fstream>
+#include <ibm-qdmi-device/diagnostics.h>
 #include <ibm_qdmi/constants.h>
 #include <memory>
 #include <optional>

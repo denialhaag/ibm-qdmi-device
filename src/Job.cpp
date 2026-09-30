@@ -27,6 +27,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <ibm-qdmi-device/constants.h>
+#include <ibm-qdmi-device/diagnostics.h>
 #include <ibm_qdmi/constants.h>
 #include <limits>
 #include <map>

@@ -83,7 +83,9 @@ State& state() {
   return value;
 }
 
-thread_local IBM_QDMI_Diagnostic lastDiagnostic = IBM_QDMI_DIAGNOSTIC_NONE;
+// The public accessor reports mutable state scoped to the calling thread.
+thread_local IBM_QDMI_Diagnostic lastDiagnostic =
+    IBM_QDMI_DIAGNOSTIC_NONE; // NOLINT
 IBM_QDMI_Diagnostic defaultDiagnostic(int status) noexcept {
   switch (status) {
   case QDMI_SUCCESS:

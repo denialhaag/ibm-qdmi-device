@@ -26,6 +26,8 @@ extern "C" {
 #endif
 
 /// Fixed, non-sensitive reason for the last QDMI call on the current thread.
+// C callers require an unscoped enum and stable C names.
+// NOLINTBEGIN
 typedef enum IBM_QDMI_Diagnostic {
   IBM_QDMI_DIAGNOSTIC_NONE = 0,
   IBM_QDMI_DIAGNOSTIC_INVALID_ARGUMENT,
@@ -40,6 +42,7 @@ typedef enum IBM_QDMI_Diagnostic {
   IBM_QDMI_DIAGNOSTIC_JOB_FAILED,
   IBM_QDMI_DIAGNOSTIC_INTERNAL
 } IBM_QDMI_Diagnostic;
+// NOLINTEND
 
 /// Query the last call's diagnostic. Any later QDMI call on this thread
 /// replaces it. The value does not contain server text, URLs, credentials, or
