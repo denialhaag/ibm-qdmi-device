@@ -324,7 +324,7 @@ int IBM_QDMI_device_session_query_device_property(
     case QDMI_DEVICE_PROPERTY_VERSION:
       return copyString(metadata.version, size, value, sizeRet);
     case QDMI_DEVICE_PROPERTY_LIBRARYVERSION:
-      return copyString("1.3.3", size, value, sizeRet);
+      return copyString(QDMI_VERSION, size, value, sizeRet);
     case QDMI_DEVICE_PROPERTY_SUPPORTEDPROGRAMFORMATS:
       return copyList(std::vector{QDMI_PROGRAM_FORMAT_QASM3,
                                   IBM_QDMI_PROGRAM_FORMAT_EXECUTOR},

@@ -84,7 +84,7 @@ calibration snapshot. Status and queue queries fetch current backend status.
 | Queries                      | Behavior                                                                                                                                                        |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Device name/version          | IBM backend name/version.                                                                                                                                       |
-| Library version              | Implemented QDMI version, `1.3.3`.                                                                                                                              |
+| Library version              | Version of the QDMI library used to build the device.                                                                                                           |
 | Qubit count, sites, coupling | Physical indices and directed pairs from backend configuration.                                                                                                 |
 | Operations                   | Native basis gates and advertised measurement/reset; signatures and site tuples from configuration or calibration metadata. Missing information is unsupported. |
 | T1, T2, gate duration        | Integer picoseconds, rounded to the nearest picosecond; duration unit `ps`, scale factor `1`.                                                                   |

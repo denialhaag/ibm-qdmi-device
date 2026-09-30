@@ -188,6 +188,9 @@ TEST_F(DeviceTest, StaticPropertiesUseCorrectTypesWithoutRequests) {
                   session, property, value.size(), value.data(), nullptr),
               QDMI_SUCCESS);
     EXPECT_NE(value.front(), '\0');
+    if (property == QDMI_DEVICE_PROPERTY_LIBRARYVERSION) {
+      EXPECT_STREQ(value.data(), QDMI_VERSION);
+    }
   }
   double scale = 0;
   EXPECT_EQ(IBM_QDMI_device_session_query_device_property(
