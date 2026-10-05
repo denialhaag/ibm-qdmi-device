@@ -50,7 +50,7 @@ releases may include breaking changes.
 
 - 🧪 Validate installed-device IAM and backend metadata against a pinned local
   Simulated Quantum Resource in offline CI, retaining Cloud Runtime and failure
-  mocks.
+  mocks. ([#58]) ([**@marcelwa**])
 
 - 📝 Add a sample environment file for IBM connection and optional client
   settings. ([#47]) ([**@marcelwa**])
@@ -220,4 +220,5 @@ releases may include breaking changes.
 [#48]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/48
 [#49]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/49
 [#50]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/50
+[#58]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/58
 [#51]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/51
