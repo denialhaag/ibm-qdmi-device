@@ -35,19 +35,21 @@ validated on hardware. Examples default to local simulation.
 
 ## Installation
 
-Install from a source checkout with Python 3.11 or newer, a C++20 compiler,
-CMake 3.24 or newer, and Git. Linux builds also require OpenSSL development
-headers.
+Install the package from [PyPI](https://pypi.org/project/ibm-qdmi/) with Python
+3.11 or newer:
 
 ```console
 uv venv
-uv pip install .          # core library and Python entry points
-uv pip install '.[qiskit]'  # adds the Qiskit backend (IBMBackend)
+uv pip install ibm-qdmi                # core library and Python entry points
+uv pip install "ibm-qdmi[qiskit]"      # adds the Qiskit backend (IBMBackend)
+uv pip install "ibm-qdmi[pennylane]"   # adds the PennyLane devices
 ```
 
-For C++ projects, follow the
-[native installation guide](https://ibm-qdmi-device.readthedocs.io/en/latest/installation.html#native-package)
-for CMake build and installation commands.
+Prebuilt wheels are available for Linux (x86_64, aarch64), macOS (arm64), and
+Windows (x86_64, ARM64). They bundle the native library, headers, and CMake
+package configuration. To build from source or install the native library for
+C++ projects with CMake, follow the
+[installation guide](https://ibm-qdmi-device.readthedocs.io/en/latest/installation.html).
 
 Use [.env.example](.env.example) as a reference for connection and optional
 client settings. Supply credentials through the process environment or a secret
