@@ -48,6 +48,10 @@ releases may include breaking changes.
 
 ### Added
 
+- 🧪 Validate installed-device IAM and backend metadata against a pinned local
+  Simulated Quantum Resource in offline CI, retaining Cloud Runtime and failure
+  mocks.
+
 - 📝 Add a sample environment file for IBM connection and optional client
   settings. ([#47]) ([**@marcelwa**])
 
