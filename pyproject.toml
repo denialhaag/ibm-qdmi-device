@@ -24,8 +24,8 @@ requires = [ "scikit-build-core>=1.0.3" ]
 name = "ibm-qdmi"
 description = "IBM quantum execution through QDMI, Qiskit, and PennyLane"
 readme = "README.md"
-license = "Apache-2.0 WITH LLVM-exception"
-license-files = [ "LICENSE" ]
+license = "Apache-2.0 WITH LLVM-exception AND MIT AND curl AND OpenSSL"
+license-files = [ "LICENSE", "licenses/LICENSE-*" ]
 requires-python = ">=3.11"
 classifiers = [
   "Development Status :: 3 - Alpha",

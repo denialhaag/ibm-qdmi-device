@@ -10,6 +10,15 @@ releases may include breaking changes.
 
 ## [Unreleased]
 
+### Fixed
+
+- 🐛 Ship license texts for libcurl, cpr, nlohmann/json, and OpenSSL bundled in
+  binary wheels, and declare them in the package license metadata. ([#59])
+  ([**@marcelwa**])
+
+- 🐛 Use absolute links in the README so its logo and links render on PyPI.
+  ([#59]) ([**@marcelwa**])
+
 ### Changed
 
 - 📝 Document installation from PyPI, keep source builds as an alternative, and
@@ -26,6 +35,7 @@ _This is the initial release of the IBM QDMI Device._
 
 <!-- PR links -->
 
+[#59]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/59
 [#60]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/60
 
 <!-- Version links -->
