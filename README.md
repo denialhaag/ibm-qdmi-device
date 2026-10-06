@@ -2,15 +2,15 @@
 <p align="center">
   <a href="https://mq.sc/">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/_static/logo-mqsc-dark.svg">
-      <img src="docs/_static/logo-mqsc-light.svg" alt="MQSC Logo" width="40%">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/munich-quantum-software/ibm-qdmi-device/main/docs/_static/logo-mqsc-dark.svg">
+      <img src="https://raw.githubusercontent.com/munich-quantum-software/ibm-qdmi-device/main/docs/_static/logo-mqsc-light.svg" alt="MQSC Logo" width="40%">
     </picture>
   </a>
 </p>
 
 # IBM QDMI Device
 
-[![License](https://img.shields.io/badge/License-Apache--2.0_w%2F_LLVM--exception-blue?logo=apache&style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache--2.0_w%2F_LLVM--exception-blue?logo=apache&style=flat-square)](https://github.com/munich-quantum-software/ibm-qdmi-device/blob/main/LICENSE)
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-blue?logo=cplusplus&style=flat-square)](https://isocpp.org/)
 [![CMake](https://img.shields.io/badge/CMake-3.24%2B-blue?logo=cmake&style=flat-square)](https://cmake.org/)
 [![CI](https://img.shields.io/github/actions/workflow/status/munich-quantum-software/ibm-qdmi-device/ci.yml?branch=main&style=flat-square&logo=github&label=CI)](https://github.com/munich-quantum-software/ibm-qdmi-device/actions/workflows/ci.yml)
@@ -52,9 +52,11 @@ package configuration. To build from source or install the native library for
 C++ projects with CMake, follow the
 [installation guide](https://ibm-qdmi-device.readthedocs.io/en/latest/installation.html).
 
-Use [.env.example](.env.example) as a reference for connection and optional
-client settings. Supply credentials through the process environment or a secret
-manager; the device does not load `.env` files.
+Use
+[.env.example](https://github.com/munich-quantum-software/ibm-qdmi-device/blob/main/.env.example)
+as a reference for connection and optional client settings. Supply credentials
+through the process environment or a secret manager; the device does not load
+`.env` files.
 
 ## Where to Start
 
@@ -77,5 +79,10 @@ for the development workflow, coding standards, and pull request process.
 ## License
 
 The core C++ library and Python package are licensed under the
-**Apache License 2.0 with LLVM exception**. See [LICENSE](LICENSE) for the
-license text.
+**Apache License 2.0 with LLVM exception**. See
+[LICENSE](https://github.com/munich-quantum-software/ibm-qdmi-device/blob/main/LICENSE)
+for the license text.
+
+Binary wheels statically link libcurl, cpr, and nlohmann/json; Linux wheels also
+bundle OpenSSL. Their license texts ship with each wheel and are available in
+[`licenses/`](https://github.com/munich-quantum-software/ibm-qdmi-device/tree/main/licenses).
