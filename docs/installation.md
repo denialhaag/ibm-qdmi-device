@@ -14,13 +14,13 @@ Select optional framework integrations with extras:
 
 ```console
 uv pip install "ibm-qdmi[qiskit]"
-uv pip install "ibm-qdmi[pennylane]"
 uv pip install "ibm-qdmi[executor]"
+uv pip install "ibm-qdmi[pennylane]"
 ```
 
-The `pennylane` extra also installs Qiskit for circuit serialization. The
-`executor` extra adds `qiskit-ibm-runtime` for
-[Executor programs](qiskit.md#optional-executor-primitive). See the
+The `executor` extra adds `qiskit-ibm-runtime` for
+[Executor programs](qiskit.md#optional-executor-primitive). The `pennylane`
+extra also installs Qiskit for circuit serialization. See the
 [dependency overview](dependencies.md) for native libraries and Python extras.
 
 Prebuilt wheels are available for Linux (x86_64, aarch64; glibc 2.28 or newer),
@@ -76,8 +76,8 @@ of PyPI:
 uv venv
 uv pip install .
 uv pip install ".[qiskit]"
-uv pip install ".[pennylane]"
 uv pip install ".[executor]"
+uv pip install ".[pennylane]"
 ```
 
 ## TLS certificates

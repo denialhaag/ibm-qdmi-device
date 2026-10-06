@@ -35,8 +35,8 @@ project's wheel.
 | Extra       | Requirement                                             | Purpose                                     |
 | :---------- | :------------------------------------------------------ | :------------------------------------------ |
 | `qiskit`    | `mqt-core[qiskit]~=4.0.0`                               | Qiskit backend and primitives               |
-| `pennylane` | `mqt-core[pennylane,qiskit]~=4.0.0`                     | PennyLane devices and circuit serialization |
 | `executor`  | `mqt-core[qiskit]~=4.0.0`, `qiskit-ibm-runtime~=0.50.0` | Executor programs through QDMI              |
+| `pennylane` | `mqt-core[pennylane,qiskit]~=4.0.0`                     | PennyLane devices and circuit serialization |
 
 Follow [Python installation](installation.md#python-package) to select extras.
 MQT Core defines their transitive Qiskit and PennyLane requirements.
