@@ -21,8 +21,9 @@ CMake downloads the configured sources.
 The default build uses static CPR and curl dependencies. Linux builds require
 OpenSSL development headers; macOS wheels use Apple's native TLS backend.
 GoogleTest is not installed with the device. See
-[installation](installation.md#native-package) for the runtime and development
-components and [development](development.md#python-checks) for wheel builds.
+[installation](installation.md#building-from-source) for the runtime and
+development components and [development](development.md#python-checks) for wheel
+builds.
 
 ## Python package and integrations
 
@@ -31,10 +32,11 @@ It declares no mandatory Python runtime dependencies. Optional integrations
 install MQT Core in the Python environment; they are not bundled into this
 project's wheel.
 
-| Extra       | Requirement                         | Purpose                                     |
-| :---------- | :---------------------------------- | :------------------------------------------ |
-| `qiskit`    | `mqt-core[qiskit]~=4.0.0`           | Qiskit backend and primitives               |
-| `pennylane` | `mqt-core[pennylane,qiskit]~=4.0.0` | PennyLane devices and circuit serialization |
+| Extra       | Requirement                                             | Purpose                                     |
+| :---------- | :------------------------------------------------------ | :------------------------------------------ |
+| `qiskit`    | `mqt-core[qiskit]~=4.0.0`                               | Qiskit backend and primitives               |
+| `executor`  | `mqt-core[qiskit]~=4.0.0`, `qiskit-ibm-runtime~=0.50.0` | Executor programs through QDMI              |
+| `pennylane` | `mqt-core[pennylane,qiskit]~=4.0.0`                     | PennyLane devices and circuit serialization |
 
 Follow [Python installation](installation.md#python-package) to select extras.
 MQT Core defines their transitive Qiskit and PennyLane requirements.

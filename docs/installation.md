@@ -1,14 +1,56 @@
 # Installation
 
-Install from a source checkout. No published release is required or assumed. Use
-a C++20 compiler, CMake 3.24 or newer, Git, and Python 3.11 or newer for Python
-packaging. Linux builds require OpenSSL development headers. Dependency
-downloads need network access; tests use synthetic data and loopback HTTP,
-without IBM access or credentials.
+## Python package
+
+Install the `ibm-qdmi` distribution from
+[PyPI](https://pypi.org/project/ibm-qdmi/) with Python 3.11 or newer:
+
+```console
+uv venv
+uv pip install ibm-qdmi
+```
+
+Select optional framework integrations with extras:
+
+```console
+uv pip install "ibm-qdmi[qiskit]"
+uv pip install "ibm-qdmi[executor]"
+uv pip install "ibm-qdmi[pennylane]"
+```
+
+The `executor` extra adds `qiskit-ibm-runtime` for
+[Executor programs](qiskit.md#optional-executor-primitive). The `pennylane`
+extra also installs Qiskit for circuit serialization. See the
+[dependency overview](dependencies.md) for native libraries and Python extras.
+
+Prebuilt wheels are available for Linux (x86_64, aarch64; glibc 2.28 or newer),
+macOS (arm64, 13 or newer), and Windows (x86_64, ARM64). On other platforms, the
+installer builds the source distribution, which requires the
+[build tools](#building-from-source).
+
+The `ibm-qdmi` distribution installs the `ibm.qdmi` namespace. Its `data/`
+directory contains the native runtime and development components. The package
+includes typing metadata and exposes `ibm.qdmi.__version__`. See the
+[Python package guide](python_package.md) for installed paths and CLI options.
 
 ## Native package
 
+The wheel includes the headers and CMake package configuration. C and C++
+projects can build against an installed wheel by passing
+`-DCMAKE_PREFIX_PATH="$(ibm-qdmi --cmake_dir)"` to CMake. To install the native
+library without Python, build it from a source checkout as described below.
+
+## Building from source
+
+Building requires a C++20 compiler, CMake 3.24 or newer, Git, and Python 3.11 or
+newer for Python packaging. Linux builds require OpenSSL development headers.
+Dependency downloads need network access.
+
+Clone the repository and build the native package:
+
 ```console
+git clone https://github.com/munich-quantum-software/ibm-qdmi-device.git
+cd ibm-qdmi-device
 cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release -DBUILD_IBM_QDMI_TESTS=OFF
 cmake --build build/native --config Release
 cmake --install build/native --config Release --prefix build/install/prefix
@@ -27,27 +69,16 @@ The exported target carries `QDMI_DEVICE_ID`, `QDMI_DEVICE_PREFIX`, and
 `QDMI_MANIFEST_NAME` properties. See the [usage guide](api.md) for the supported
 interface and a query example.
 
-## Python package
+To build and install the Python package and its extras from the checkout instead
+of PyPI:
 
 ```console
 uv venv
 uv pip install .
+uv pip install ".[qiskit]"
+uv pip install ".[executor]"
+uv pip install ".[pennylane]"
 ```
-
-Select an optional framework integration from the same checkout:
-
-```console
-uv pip install '.[qiskit]'
-uv pip install '.[pennylane]'
-```
-
-The `pennylane` extra also installs Qiskit for circuit serialization. See the
-[dependency overview](dependencies.md) for native libraries and Python extras.
-
-The `ibm-qdmi` distribution installs the `ibm.qdmi` namespace. Its `data/`
-directory contains the native runtime and development components. The package
-includes typing metadata and exposes `ibm.qdmi.__version__`. See the
-[Python package guide](python_package.md) for installed paths and CLI options.
 
 ## TLS certificates
 
