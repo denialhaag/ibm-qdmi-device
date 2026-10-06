@@ -1,11 +1,10 @@
 # Qiskit integration
 
 {py:class}`~ibm.qdmi.qiskit.IBMBackend` adapts the installed native device
-through MQT Core's `QDMIBackend` and `QDMIJob`. Install the optional extra from
-the source checkout:
+through MQT Core's `QDMIBackend` and `QDMIJob`. Install the optional extra:
 
 ```console
-uv pip install '.[qiskit]'
+uv pip install "ibm-qdmi[qiskit]"
 ```
 
 The extra uses `mqt-core[qiskit]~=4.0.0`. The base package remains usable

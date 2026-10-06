@@ -1,9 +1,10 @@
 # Python package
 
 The `ibm-qdmi` distribution provides the `ibm.qdmi` namespace and bundles the
-native library, device catalogue, headers, and CMake configuration. Follow
-[installation](installation.md#python-package) to install from a checkout.
-Importing the package does not load a device or contact IBM.
+native library, device catalogue, headers, and CMake configuration. Install it
+from PyPI with `uv pip install ibm-qdmi`; see
+[installation](installation.md#python-package) for extras and supported
+platforms. Importing the package does not load a device or contact IBM.
 
 ## Installed paths
 
