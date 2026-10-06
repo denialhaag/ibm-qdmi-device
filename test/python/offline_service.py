@@ -33,7 +33,7 @@ import pytest
 from native_support import Native, load_native
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterator
+    from collections.abc import Callable, Generator, Iterator
     from ssl import SSLContext
 
 CRN = "crn:v1:bluemix:public:quantum-computing:us-east:a:instance::"
@@ -79,7 +79,7 @@ class Service:
 
 
 @contextmanager
-def serve(*, tls: SSLContext | None = None) -> Iterator[Service]:
+def serve(*, tls: SSLContext | None = None) -> Generator[Service, None, None]:
     """Serve IBM-shaped responses without external network access.
 
     Yields:

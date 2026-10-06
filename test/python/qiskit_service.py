@@ -33,7 +33,7 @@ from qiskit.providers.basic_provider import BasicSimulator
 from ibm.qdmi.qiskit import IBMBackend
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Generator
 
     from offline_service import Service
 
@@ -257,7 +257,7 @@ RuntimeManager.register("runtime", RuntimeServer)
 
 
 @contextmanager
-def remote_runtime() -> Iterator[RuntimeProxy]:
+def remote_runtime() -> Generator[RuntimeProxy, None, None]:
     """Host HTTP outside the native binding's Python GIL.
 
     Yields:

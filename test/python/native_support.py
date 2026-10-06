@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING
 from ibm import qdmi
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator, Mapping
+    from collections.abc import Generator, Mapping
 
 
 class MetadataError(Exception):
@@ -116,7 +116,7 @@ class Native:
         self.job_free.restype = None
 
     @contextmanager
-    def job(self, session: ctypes.c_void_p) -> Iterator[ctypes.c_void_p]:
+    def job(self, session: ctypes.c_void_p) -> Generator[ctypes.c_void_p, None, None]:
         """Allocate a job and release its local resources after use.
 
         Yields:
@@ -130,7 +130,7 @@ class Native:
             self.job_free(handle)
 
     @contextmanager
-    def session(self, parameters: Mapping[int, str]) -> Iterator[ctypes.c_void_p]:
+    def session(self, parameters: Mapping[int, str]) -> Generator[ctypes.c_void_p, None, None]:
         """Allocate and configure a session; always free it afterward.
 
         Yields:
@@ -160,7 +160,7 @@ class Native:
 
 
 @contextmanager
-def load_native(library_path: str | None = None) -> Iterator[Native]:
+def load_native(library_path: str | None = None) -> Generator[Native, None, None]:
     """Own the installed library lifecycle.
 
     Yields:
