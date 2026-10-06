@@ -43,6 +43,7 @@ uv venv
 uv pip install ibm-qdmi                # core library and Python entry points
 uv pip install "ibm-qdmi[qiskit]"      # adds the Qiskit backend (IBMBackend)
 uv pip install "ibm-qdmi[pennylane]"   # adds the PennyLane devices
+uv pip install "ibm-qdmi[executor]"    # adds Executor programs (IBMBackend.executor)
 ```
 
 Prebuilt wheels are available for Linux (x86_64, aarch64), macOS (arm64), and

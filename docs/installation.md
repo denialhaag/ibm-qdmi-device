@@ -69,13 +69,15 @@ The exported target carries `QDMI_DEVICE_ID`, `QDMI_DEVICE_PREFIX`, and
 `QDMI_MANIFEST_NAME` properties. See the [usage guide](api.md) for the supported
 interface and a query example.
 
-To build and install the Python package from the checkout instead of PyPI,
-select extras the same way:
+To build and install the Python package and its extras from the checkout instead
+of PyPI:
 
 ```console
 uv venv
 uv pip install .
-uv pip install '.[qiskit]'
+uv pip install ".[qiskit]"
+uv pip install ".[pennylane]"
+uv pip install ".[executor]"
 ```
 
 ## TLS certificates
