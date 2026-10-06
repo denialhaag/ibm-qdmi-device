@@ -2,8 +2,8 @@
 
 ## Supported Versions
 
-The project is in development and has no supported production release yet.
-Security fixes target the main branch.
+Security fixes target the main branch and the latest release published on
+[PyPI](https://pypi.org/project/ibm-qdmi/). Older releases are not supported.
 
 ## Reporting a Vulnerability
 

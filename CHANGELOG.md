@@ -10,6 +10,11 @@ releases may include breaking changes.
 
 ## [Unreleased]
 
+### Changed
+
+- 📝 Document installation from PyPI, keep source builds as an alternative, and
+  list the supported wheel platforms. ([#60]) ([**@marcelwa**])
+
 ## [0.1.0] - 2026-10-05
 
 _This is the initial release of the IBM QDMI Device._
@@ -18,6 +23,10 @@ _This is the initial release of the IBM QDMI Device._
 
 - 🎉 Initial release. See the [documentation] for features and usage.
   ([**@marcelwa**])
+
+<!-- PR links -->
+
+[#60]: https://github.com/munich-quantum-software/ibm-qdmi-device/pull/60
 
 <!-- Version links -->
 
