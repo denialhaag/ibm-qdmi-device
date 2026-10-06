@@ -32,7 +32,7 @@ from cryptography.hazmat.primitives.asymmetric import ec
 from offline_service import serve
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Generator
     from pathlib import Path
 
     from native_support import Native
@@ -41,7 +41,7 @@ pytestmark = pytest.mark.integration
 
 
 @contextmanager
-def tls_context(authority: trustme.CA, hostname: str) -> Iterator[ssl.SSLContext]:
+def tls_context(authority: trustme.CA, hostname: str) -> Generator[ssl.SSLContext, None, None]:
     """Serve local revocation data so Schannel can verify the certificate.
 
     Yields:
