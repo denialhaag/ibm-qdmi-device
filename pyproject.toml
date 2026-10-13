@@ -198,11 +198,7 @@ test-groups = [ "test" ]
 test-sources = [ "pyproject.toml", "test" ]
 
 [tool.cibuildwheel.linux]
-environment = { PATH = "$HOME/.cargo/bin:$PATH" }
-before-all = """
-yum install -y openssl-devel &&
-curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
-"""
+before-all = "yum install -y openssl-devel"
 
 [tool.cibuildwheel.macos]
 environment = { MACOSX_DEPLOYMENT_TARGET = "13.3" }
@@ -218,6 +214,12 @@ environment = { MACOSX_DEPLOYMENT_TARGET = "13.3" }
 
 [tool.cibuildwheel.windows]
 repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel} --namespace-pkg ibm"
+
+[[tool.cibuildwheel.overrides]]
+select = "cp315-manylinux_*"
+environment = { PATH = "$HOME/.cargo/bin:$PATH" }
+before-all = "curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal"
+inherit.before-all = "append"
 
 
 [tool.ruff]
